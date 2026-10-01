@@ -1,8 +1,8 @@
-﻿# Enterprise Support Engineering Lab â€” Architecture
+﻿# Enterprise Support Engineering Lab — Architecture
 
 **Document Version:** 0.1  
 
-**Project Phase:** Phase 0 â€” Architecture and Design  
+**Project Phase:** Phase 0 — Architecture and Design  
 
 **Status:** Initial Design
 
@@ -224,7 +224,7 @@ Planned initial resources:
 
 - Approximately 8 GB RAM
 
-- Approximately 180â€“200 GB virtual storage
+- Approximately 180–200 GB virtual storage
 
 Resource allocation may change following documentation review and testing.
 
@@ -296,13 +296,13 @@ The final BIS version and configuration will be based on the applicable Keenfini
 
 During the initial deployment:
 
-- DC01 â†’ Internet: blocked
+- DC01 → Internet: blocked
 
-- BIS01 â†’ Internet: blocked
+- BIS01 → Internet: blocked
 
-- SQL01 â†’ Internet: blocked
+- SQL01 → Internet: blocked
 
-- CLIENT01 â†’ Internet: blocked
+- CLIENT01 → Internet: blocked
 
 No lab system will initially have a default gateway.
 
@@ -310,13 +310,13 @@ Required installation media will be downloaded separately and transferred into t
 
 ## Build Methodology
 
-### Stage 1 â€” Known-Good Baseline
+### Stage 1 — Known-Good Baseline
 
 All components will first be installed using supported configurations.
 
 The complete environment must operate correctly before resource restrictions or intentional failures are introduced.
 
-### Stage 2 â€” Baseline Measurements
+### Stage 2 — Baseline Measurements
 
 Healthy-system behavior will be measured and documented.
 
@@ -344,7 +344,7 @@ Possible measurements include:
 
 - Network behavior
 
-### Stage 3 â€” Controlled Resource Constraints
+### Stage 3 — Controlled Resource Constraints
 
 Resources may then be reduced intentionally.
 
@@ -358,7 +358,7 @@ Examples include:
 
 Whenever possible, only one major variable will be changed at a time.
 
-### Stage 4 â€” Failure Injection
+### Stage 4 — Failure Injection
 
 Potential scenarios include:
 
@@ -384,7 +384,7 @@ Potential scenarios include:
 
 - Resource exhaustion
 
-### Stage 5 â€” Troubleshooting and Root-Cause Analysis
+### Stage 5 — Troubleshooting and Root-Cause Analysis
 
 Each incident will document:
 
