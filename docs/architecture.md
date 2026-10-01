@@ -1,515 +1,470 @@
-﻿# Enterprise Support Engineering Lab — Architecture
+# Enterprise Support Engineering Lab — Architecture
 
-**Document Version:** 0.1  
+**Document version:** 0.1  
+**Project phase:** Phase 0 — Architecture and Design  
+**Status:** Initial design
 
-**Project Phase:** Phase 0 — Architecture and Design  
-
-**Status:** Initial Design
-
-## Project Purpose
+## 1. Project Purpose
 
 This project is a hands-on enterprise infrastructure and support-engineering lab built around Keenfinity Building Integration System (BIS).
 
-The environment is designed to reproduce a realistic enterprise deployment while refreshing and expanding skills in:
+The environment is designed to reproduce a realistic enterprise deployment while providing a controlled platform for refreshing and expanding skills in:
 
 - Windows Server administration
-
 - Active Directory
-
 - DNS
-
 - Group Policy
-
 - Microsoft SQL Server
-
 - SQL Server Reporting Services
-
 - Enterprise application deployment
-
 - Networking
-
 - Firewalls and VPN
-
 - Certificates and PKI
-
 - Monitoring
-
 - PowerShell and automation
-
 - Performance analysis
-
 - Packet analysis
-
 - Incident troubleshooting
-
 - Root-cause analysis
 
-The environment will first be established as a known-good working deployment. Performance constraints and failures will later be introduced deliberately and analyzed using structured troubleshooting methods.
+The environment will first be built as a known-good supported deployment. Performance constraints and failures will then be introduced deliberately and analyzed using structured troubleshooting methods.
 
-## Physical Environment
+---
+
+## 2. Physical Environment
 
 ### Primary VMware Host
 
+**Role:** Main virtualization host
+
+**Hardware:**
 - AMD Ryzen 9 processor
-
 - 32 GB RAM
-
 - Approximately 700 GB available storage
-
 - VMware Workstation
 
-Initial virtual machines:
-
+**Initial virtual machines:**
 - BIS01
-
 - SQL01
 
 ### Secondary VMware Host
 
+**Role:** Infrastructure virtualization host
+
+**Hardware:**
 - Intel Core i5-class processor
-
 - 8 GB RAM
-
 - VMware Workstation
 
-Initial virtual machines:
-
+**Initial virtual machines:**
 - DC01
 
 ### Client Computer
 
-- Intel Core i5-class processor
+**Role:** Physical enterprise client workstation
 
+**Hardware:**
+- Intel Core i5-class processor
 - 8 GB RAM
 
-- Physical Windows workstation
-
-Initial role:
-
+**Initial role:**
 - CLIENT01
 
-CLIENT01 will later also be used for remote-access and VPN testing.
+This system will later also be used for remote-access and VPN testing.
 
-## Physical Network
+---
 
-The enterprise lab uses a dedicated Ethernet network that is physically isolated from the normal home network and the Internet.
+## 3. Physical Network
+
+The enterprise lab uses a dedicated physical Ethernet network that is isolated from the normal home network and the Internet.
 
 ### Lab Network
 
 `10.10.10.0/24`
 
+### Lab Network Equipment
+
+```text
+Management IP: 10.10.10.254
+WAN connection: Disconnected
+DHCP: Disabled
+Internet access: None
+```
+
 The dedicated network device is initially used only to provide Ethernet connectivity between the physical lab systems.
-
-- WAN/Internet connection: disconnected
-
-- DHCP: disabled
-
-- Internet access: none
-
-- Management address: `10.10.10.254`
 
 ### Physical Host Addresses
 
-| System | Address |
-
-| --- | --- |
-
-| Primary VMware host | `10.10.10.101` |
-
+| Device | Address |
+|---|---|
+| Main VMware host | `10.10.10.101` |
 | Secondary VMware host | `10.10.10.102` |
-
 | Lab network device | `10.10.10.254` |
 
-The physical VMware hosts may independently use Wi-Fi for normal Internet connectivity.
+The physical hosts may independently use Wi-Fi for normal Internet access.
 
-The home and lab networks must not be bridged, and Windows Internet Connection Sharing must remain disabled.
+The Wi-Fi and lab Ethernet networks must not be bridged.
 
-## Enterprise Lab Addressing
+Windows Internet Connection Sharing must remain disabled.
+
+---
+
+## 4. Enterprise Lab Network
 
 **Network:** `10.10.10.0/24`  
+**Subnet mask:** `255.255.255.0`
 
-**Subnet Mask:** `255.255.255.0`
+There is initially **no default gateway**.
 
-There is initially no default gateway.
+This intentionally prevents the lab systems from reaching the Internet.
+
+### Addressing Plan
 
 | System | IP Address | Function |
-
-| --- | --- | --- |
-
-| FW01 | `10.10.10.1` | Future firewall, gateway and VPN |
-
-| DC01 | `10.10.10.10` | Active Directory and DNS |
-
+|---|---:|---|
+| Future FW01 | `10.10.10.1` | Firewall / gateway / VPN |
+| DC01 | `10.10.10.10` | Active Directory / DNS |
 | BIS01 | `10.10.10.20` | BIS application server |
-
-| SQL01 | `10.10.10.30` | SQL Server and SSRS |
-
+| SQL01 | `10.10.10.30` | SQL Server / SSRS |
 | CLIENT01 | `10.10.10.40` | Enterprise client |
+| Future MON01 | `10.10.10.50` | Monitoring / automation |
+| Main physical host | `10.10.10.101` | VMware host |
+| Secondary physical host | `10.10.10.102` | VMware host |
+| Network device | `10.10.10.254` | Network management |
 
-| MON01 | `10.10.10.50` | Future monitoring and automation |
+Addresses not currently assigned are reserved for future expansion.
 
-| Primary VMware host | `10.10.10.101` | Virtualization host |
+---
 
-| Secondary VMware host | `10.10.10.102` | Virtualization host |
+## 5. Active Directory Design
 
-| Lab network device | `10.10.10.254` | Network management |
+### Active Directory DNS Domain
 
-## Active Directory Design
+`corp.bryanlab.test`
 
-**Active Directory DNS Domain:** `corp.bryanlab.test`
+### NetBIOS Domain
 
-**NetBIOS Domain:** `BRYANLAB`
+`BRYANLAB`
+
+### Initial Domain Controller
+
+`DC01`
+
+DC01 will provide:
+
+- Active Directory Domain Services
+- DNS
+- Domain authentication
+- Group Policy support
+
+DHCP may be introduced later as an additional Windows Server service.
+
+Domain-joined systems will use:
+
+`Preferred DNS: 10.10.10.10`
+
+No Internet DNS forwarding is required during the initial isolated deployment.
+
+---
+
+## 6. Server Roles
 
 ### DC01
 
-Operating system:
+**Operating system:** Windows Server 2019
 
-`Windows Server 2019`
-
-Initial roles:
-
+**Roles:**
 - Active Directory Domain Services
-
 - DNS
-
 - Group Policy infrastructure
 
-- Domain authentication
+### BIS01
 
-Domain-joined systems will eventually use:
+**Operating system:** Windows Server 2019
 
-`10.10.10.10`
+**Roles:**
+- Keenfinity Building Integration System
+- BIS application/login server
+- BIS-related application services
 
-as their preferred DNS server.
+BIS01 will use a remote SQL Server rather than a locally installed production database.
 
-## BIS01
+### SQL01
 
-Operating system:
+**Operating system:** Windows Server 2019
 
-`Windows Server 2019`
-
-Initial role:
-
-- Keenfinity Building Integration System application/login server
-
-BIS01 will use a remote Microsoft SQL Server rather than a locally installed production database.
-
-Planned baseline resources:
-
-- 4 vCPU
-
-- 16 GB RAM
-
-- Approximately 120 GB virtual storage
-
-## SQL01
-
-Operating system:
-
-`Windows Server 2019`
-
-Initial roles:
-
+**Roles:**
 - Microsoft SQL Server 2019
-
 - SQL Server Reporting Services
-
 - BIS databases
-
 - Reporting databases
 
-Planned initial resources:
+SQL01 will be separate from BIS01 to reproduce an enterprise remote-database architecture.
 
-- 4 vCPU
+### CLIENT01
 
-- Approximately 8 GB RAM
+**Platform:** Physical Windows workstation
 
-- Approximately 180–200 GB virtual storage
-
-Resource allocation may change following documentation review and testing.
-
-## CLIENT01
-
-Initial roles:
-
-- Windows domain member
-
+**Roles:**
+- Domain member
 - BIS client
-
-- Enterprise test workstation
-
-- Future VPN endpoint
-
+- Enterprise user workstation
+- Testing workstation
+- Future VPN client
 - Future packet-analysis workstation
 
-## Future Infrastructure
+### FW01 — Future
 
-### FW01
-
-Planned functions:
-
+**Roles:**
+- Network firewall
 - Routing
-
-- Firewall
-
 - Controlled Internet access
-
+- VPN termination
 - Network segmentation
 
-- VPN termination
+FW01 will eventually become the lab's default gateway.
 
-### MON01
+### MON01 — Future
 
-Planned functions:
-
+**Roles:**
 - Infrastructure monitoring
-
-- Health checks
-
 - Automation
-
+- Health checking
 - Future Linux administration exercises
 
-## Software Baseline
+---
 
-Currently planned:
+## 7. Initial Resource Allocation
 
-- Windows Server 2019
+Resource assignments are provisional until the exact BIS release and its requirements are finalized.
 
-- Microsoft SQL Server 2019
+### BIS01
 
-- SQL Server Reporting Services
+```text
+vCPU: 4
+RAM: 16 GB baseline target
+Storage: approximately 120 GB initially
+```
 
-- Keenfinity Building Integration System
+### SQL01
 
-Available BIS versions being considered:
+```text
+vCPU: 4
+RAM: approximately 8 GB initially
+Storage: approximately 180–200 GB initially
+```
 
-- BIS 4.9.1
+### DC01
 
-- BIS 5.0
+```text
+vCPU: 2
+RAM: approximately 3–4 GB
+Storage: approximately 60 GB
+```
 
-- BIS 6.0
+Resource utilization on the physical VMware hosts will be monitored to ensure host resource pressure does not invalidate application performance testing.
 
-The final BIS version and configuration will be based on the applicable Keenfinity installation manuals, release letters, data sheets and compatibility information.
+---
 
-## Initial Network Isolation
+## 8. Software Baseline
+
+Current planned baseline:
+
+```text
+Server OS: Windows Server 2019
+Database platform: Microsoft SQL Server 2019
+Reporting: SQL Server Reporting Services
+Enterprise application: Keenfinity Building Integration System
+```
+
+The exact BIS release will be finalized after reviewing the version-specific release letter, installation documentation, system requirements, and compatibility information from the official Keenfinity Download Store.
+
+Candidate BIS versions currently available for the lab include:
+
+```text
+BIS 4.9.1
+BIS 5.0
+BIS 6.0
+```
+
+---
+
+## 9. Network Isolation
 
 During the initial deployment:
 
-- DC01 → Internet: blocked
+```text
+DC01      → Internet: BLOCKED
+BIS01     → Internet: BLOCKED
+SQL01     → Internet: BLOCKED
+CLIENT01  → Internet: BLOCKED
+```
 
-- BIS01 → Internet: blocked
+No system will initially have a default gateway.
 
-- SQL01 → Internet: blocked
+Installation files and other required software will be obtained separately and transferred into the isolated environment.
 
-- CLIENT01 → Internet: blocked
+Controlled outbound access may later be introduced through FW01.
 
-No lab system will initially have a default gateway.
+---
 
-Required installation media will be downloaded separately and transferred into the isolated environment.
+## 10. Build Philosophy
 
-## Build Methodology
+The project follows a controlled engineering approach.
 
-### Stage 1 — Known-Good Baseline
+### Stage 1 — Supported Baseline
 
-All components will first be installed using supported configurations.
+All components will first be installed and configured using supported hardware and software configurations.
 
-The complete environment must operate correctly before resource restrictions or intentional failures are introduced.
+The environment must operate correctly before intentional failures or resource restrictions are introduced.
 
 ### Stage 2 — Baseline Measurements
 
-Healthy-system behavior will be measured and documented.
+Performance and behavior will be documented while the environment is healthy.
 
-Possible measurements include:
+Potential measurements include:
 
 - Server startup
-
 - Service startup
-
 - BIS client login
-
 - Application responsiveness
-
 - SQL responsiveness
-
 - Report generation
-
-- CPU utilization
-
+- CPU usage
 - Memory utilization
-
 - Paging
-
 - Disk performance
-
 - Network behavior
 
 ### Stage 3 — Controlled Resource Constraints
 
 Resources may then be reduced intentionally.
 
-Examples include:
+Examples:
 
-- RAM reduction
+```text
+Memory reduction
+CPU reduction
+Storage-performance constraints
+```
 
-- CPU reduction
-
-- Storage-performance constraints
-
-Whenever possible, only one major variable will be changed at a time.
+Only one major variable should be changed at a time whenever possible.
 
 ### Stage 4 — Failure Injection
 
-Potential scenarios include:
+After the complete environment is stable, failures will deliberately be introduced.
 
-- DNS failures
+Examples include:
 
-- SQL connectivity failures
-
+- DNS failure
+- SQL connectivity failure
 - Blocked network ports
-
-- Windows service failures
-
+- Service failures
 - Active Directory account problems
-
 - Permission problems
-
 - Group Policy problems
-
 - Certificate failures
-
 - SSRS failures
-
 - VPN problems
-
 - Resource exhaustion
 
 ### Stage 5 — Troubleshooting and Root-Cause Analysis
 
-Each incident will document:
-
-- Incident description
-
-- Symptoms
-
-- Impact
-
-- Initial hypotheses
-
-- Diagnostic process
-
-- Evidence collected
-
-- Root cause
-
-- Resolution
-
-- Validation
-
-- Preventive recommendation
-
-- Lessons learned
-
-Potential diagnostic tools include:
-
-- Windows Event Viewer
-
-- PowerShell
-
-- Performance Monitor
-
-- Resource Monitor
-
-- SQL Server logs
-
-- BIS logs
-
-- SSRS logs
-
-- IIS logs
-
-- DNS tools
-
-- Windows networking utilities
-
-- Wireshark
-
-## Project Phases
-
-1. Architecture and Design
-
-2. Virtual Infrastructure
-
-3. Active Directory and DNS
-
-4. SQL Server and Reporting Services
-
-5. BIS Deployment
-
-6. Client and Identity Integration
-
-7. Certificates and PKI
-
-8. Network Segmentation and Firewall
-
-9. Monitoring and Automation
-
-10. Remote Access and VPN
-
-11. Supported Baseline and Performance Testing
-
-12. Failure Injection and Troubleshooting
-
-## Current Logical Architecture
+Each failure scenario will be documented using:
 
 ```text
-
-                    ISOLATED ENTERPRISE LAB
-
-                          10.10.10.0/24
-
-                              DC01
-
-                         10.10.10.10
-
-                         AD DS / DNS
-
-                              |
-
-                 +------------+------------+
-
-                 |            |            |
-
-                 |            |            |
-
-               BIS01        SQL01       CLIENT01
-
-            10.10.10.20   10.10.10.30  10.10.10.40
-
-                 |            |
-
-                 |       SQL Server 2019
-
-                 |            +
-
-                 |           SSRS
-
-                 |            |
-
-                 +------------+
-
-                    BIS <-> SQL/SSRS
-
-                     No Internet
-
-                  No Default Gateway
-
+Incident
+Symptoms
+Impact
+Initial hypotheses
+Diagnostic process
+Evidence
+Root cause
+Resolution
+Validation
+Preventive recommendation
+Lessons learned
 ```
 
-## Documentation Principle
+Diagnostic tools may include:
 
-Architecture changes, configuration decisions, experiments, troubleshooting procedures, failures and findings will be documented throughout the project.
+- Windows Event Viewer
+- PowerShell
+- Performance Monitor
+- Resource Monitor
+- SQL Server logs
+- BIS logs
+- SSRS logs
+- IIS logs
+- DNS tools
+- Network troubleshooting tools
+- Wireshark
 
-The objective is not merely to make the environment work, but to demonstrate a repeatable enterprise support-engineering methodology.
+---
+
+## 11. Planned Project Phases
+
+```text
+Phase 0   Architecture & Design
+Phase 1   Virtual Infrastructure
+Phase 2   Active Directory & DNS
+Phase 3   SQL Server & Reporting Services
+Phase 4   BIS Deployment
+Phase 5   Client & Identity Integration
+Phase 6   Certificates / PKI
+Phase 7   Network Segmentation & Firewall
+Phase 8   Monitoring & Automation
+Phase 9   Remote Access / VPN
+Phase 10  Supported Baseline & Performance Testing
+Phase 11  Failure Injection & Troubleshooting
+```
+
+---
+
+## 12. Current Architecture
+
+```text
+                 ISOLATED ENTERPRISE LAB
+                       10.10.10.0/24
+
+                           DC01
+                      10.10.10.10
+                      AD DS / DNS
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+              ▼            ▼            ▼
+
+            BIS01        SQL01       CLIENT01
+         10.10.10.20   10.10.10.30  10.10.10.40
+              │            │
+              │       SQL Server 2019
+              │            +
+              │           SSRS
+              │            │
+              └────────────┘
+               BIS ↔ SQL/SSRS
+
+                  No Internet access
+                  No default gateway
 
 
+Future:
+
+                        FW01
+                     Firewall/VPN
+                         │
+                ┌────────┴────────┐
+                │                 │
+         Enterprise Network   Remote/VPN
+                │                 │
+       DC01/BIS01/SQL01       CLIENT01
+```
+
+---
+
+## 13. Documentation Principle
+
+All architecture changes, configuration decisions, experiments, failures, troubleshooting procedures, and findings should be documented throughout the project.
+
+The objective is not only to make the environment work, but to demonstrate repeatable enterprise support-engineering methodology.
