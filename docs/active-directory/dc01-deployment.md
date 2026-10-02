@@ -18,16 +18,16 @@ Deploy the first domain controller for the isolated enterprise lab.
 3. Configured the hostname and static IP address.
 4. Installed Active Directory Domain Services and DNS.
 5. Created a new forest: corp.bryanlab.test.
-6. Promoted DC01 to domain controller.
+6. Promoted DC01 as the first domain controller in the new forest.
 
 ## Validation
 Validation included:
-- Get-ADDomain
-- Get-ADForest
-- Get-DnsServerZone
-- Resolve-DnsName for LDAP SRV records
-- ipconfig /all
-- dcdiag /v
+- `Get-ADDomain`
+- `Get-ADForest`
+- `Get-DnsServerZone`
+- `Resolve-DnsName -Type SRV _ldap._tcp.dc._msdcs.corp.bryanlab.test`
+- `ipconfig /all`
+- `dcdiag /v`
 
 ## Results
 Core Active Directory and DNS functionality is operational.
@@ -40,6 +40,4 @@ dcdiag reported DFS Replication and SystemLog warnings generated during/after pr
 These were retained for later troubleshooting instead of being removed from the evidence.
 
 ## Evidence
-See:
-
-`../../evidence/active-directory/`
+See the [Active Directory deployment evidence](../../evidence/active-directory/).
