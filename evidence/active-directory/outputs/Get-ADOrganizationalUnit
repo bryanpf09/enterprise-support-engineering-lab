@@ -1,0 +1,13 @@
+﻿
+Name                      DistinguishedName                                                     
+----                      -----------------                                                     
+Domain Controllers        OU=Domain Controllers,DC=corp,DC=bryanlab,DC=test                     
+BRYANLAB-Servers          OU=BRYANLAB-Servers,DC=corp,DC=bryanlab,DC=test                       
+Application-Servers       OU=Application-Servers,OU=BRYANLAB-Servers,DC=corp,DC=bryanlab,DC=test
+Database-Servers          OU=Database-Servers,OU=BRYANLAB-Servers,DC=corp,DC=bryanlab,DC=test   
+BRYANLAB-Workstations     OU=BRYANLAB-Workstations,DC=corp,DC=bryanlab,DC=test                  
+BRYANLAB-Users            OU=BRYANLAB-Users,DC=corp,DC=bryanlab,DC=test                         
+BRYANLAB-Service-Accounts OU=BRYANLAB-Service-Accounts,DC=corp,DC=bryanlab,DC=test              
+BRYANLAB-Groups           OU=BRYANLAB-Groups,DC=corp,DC=bryanlab,DC=test                        
+
+
