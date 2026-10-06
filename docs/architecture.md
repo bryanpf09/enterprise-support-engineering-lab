@@ -1,8 +1,8 @@
 # Enterprise Support Engineering Lab — Architecture
 
-**Document version:** 0.1  
-**Project phase:** Phase 0 — Architecture and Design  
-**Status:** Initial design
+**Document version:** 0.2  
+**Project phase:** Phase 2 — Active Directory & DNS  
+**Status:** In progress — AD/DNS baseline deployed and validated
 
 ## 1. Project Purpose
 
@@ -43,21 +43,23 @@ The environment will first be built as a known-good supported deployment. Perfor
 - Approximately 700 GB available storage
 - VMware Workstation
 
-**Initial virtual machines:**
+**Current virtual machines:**
+- DC01
+
+**Planned virtual machines:**
 - BIS01
 - SQL01
 
-### Secondary VMware Host
-
-**Role:** Infrastructure virtualization host
+### Secondary Lab Computer
 
 **Hardware:**
 - Intel Core i5-class processor
 - 8 GB RAM
-- VMware Workstation
 
-**Initial virtual machines:**
-- DC01
+**Current role:**
+- Reserved for future lab expansion
+
+DC01 was originally planned for this system but was moved to the primary VMware host during implementation.
 
 ### Client Computer
 
@@ -98,7 +100,7 @@ The dedicated network device is initially used only to provide Ethernet connecti
 | Device | Address |
 |---|---|
 | Main VMware host | `10.10.10.101` |
-| Secondary VMware host | `10.10.10.102` |
+| Secondary lab computer | `10.10.10.102` |
 | Lab network device | `10.10.10.254` |
 
 The physical hosts may independently use Wi-Fi for normal Internet access.
@@ -129,7 +131,7 @@ This intentionally prevents the lab systems from reaching the Internet.
 | CLIENT01 | `10.10.10.40` | Enterprise client |
 | Future MON01 | `10.10.10.50` | Monitoring / automation |
 | Main physical host | `10.10.10.101` | VMware host |
-| Secondary physical host | `10.10.10.102` | VMware host |
+| Secondary lab computer | `10.10.10.102` | Future lab expansion |
 | Network device | `10.10.10.254` | Network management |
 
 Addresses not currently assigned are reserved for future expansion.
@@ -150,7 +152,7 @@ Addresses not currently assigned are reserved for future expansion.
 
 `DC01`
 
-DC01 will provide:
+DC01 currently provides:
 
 - Active Directory Domain Services
 - DNS
@@ -164,6 +166,27 @@ Domain-joined systems will use:
 `Preferred DNS: 10.10.10.10`
 
 No Internet DNS forwarding is required during the initial isolated deployment.
+
+### Current Active Directory Implementation
+
+The initial Active Directory structure has been created and validated.
+
+Current organizational units include:
+
+- `BRYANLAB-Servers`
+  - `Application-Servers`
+  - `Database-Servers`
+- `BRYANLAB-Workstations`
+- `BRYANLAB-Users`
+- `BRYANLAB-Service-Accounts`
+- `BRYANLAB-Groups`
+
+Initial Global Security Groups include:
+
+- `GG-BIS-Administrators`
+- `GG-BIS-Operators`
+- `GG-BIS-ReadOnly`
+- `GG-SQL-Administrators`
 
 ---
 
@@ -402,26 +425,26 @@ Diagnostic tools may include:
 
 ---
 
-## 11. Planned Project Phases
+## 11. Project Phases
 
 ```text
-Phase 0   Architecture & Design
-Phase 1   Virtual Infrastructure
-Phase 2   Active Directory & DNS
-Phase 3   SQL Server & Reporting Services
-Phase 4   BIS Deployment
-Phase 5   Client & Identity Integration
-Phase 6   Certificates / PKI
-Phase 7   Network Segmentation & Firewall
-Phase 8   Monitoring & Automation
-Phase 9   Remote Access / VPN
-Phase 10  Supported Baseline & Performance Testing
-Phase 11  Failure Injection & Troubleshooting
+Phase 0   Architecture & Design — Completed
+Phase 1   Virtual Infrastructure — In progress
+Phase 2   Active Directory & DNS — In progress
+Phase 3   SQL Server & Reporting Services — Planned
+Phase 4   BIS Deployment — Planned
+Phase 5   Client & Identity Integration — Planned
+Phase 6   Certificates / PKI — Planned
+Phase 7   Network Segmentation & Firewall — Planned
+Phase 8   Monitoring & Automation — Planned
+Phase 9   Remote Access / VPN — Planned
+Phase 10  Supported Baseline & Performance Testing — Planned
+Phase 11  Failure Injection & Troubleshooting — Planned
 ```
 
 ---
 
-## 12. Current Architecture
+## 12. Target Architecture
 
 ```text
                  ISOLATED ENTERPRISE LAB
