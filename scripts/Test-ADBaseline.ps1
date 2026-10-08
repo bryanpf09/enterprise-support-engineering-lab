@@ -1,6 +1,7 @@
 # Test-ADBaseline.ps1
 # Validates the expected Active Directory baseline for the enterprise lab.
-# Requires -Modules ActiveDirectory
+
+#Requires -Modules ActiveDirectory
 
 $ExpectedDomain = "corp.bryanlab.test"
 $ExpectedNetBIOS = "BRYANLAB"
