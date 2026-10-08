@@ -22,6 +22,7 @@ Completed so far:
 - Created Global Security Groups for planned BIS and SQL access roles
 - Collected screenshots and command output as deployment evidence
 - Documented post-deployment `dcdiag` findings for later troubleshooting
+- Added a reusable PowerShell script to validate the Active Directory baseline
 
 ## Current Active Directory Structure
 
@@ -110,6 +111,12 @@ Examples include:
 - `dcdiag`
 - `ipconfig /all`
 
+A reusable PowerShell baseline validation script is available here:
+
+[Active Directory baseline validation script](scripts/Test-ADBaseline.ps1)
+
+[Latest baseline validation output](evidence/active-directory/outputs/Test-ADBaseline-output.txt)
+
 Supporting command output and screenshots:
 
 [Active Directory evidence](evidence/active-directory/)
@@ -128,5 +135,5 @@ Supporting command output and screenshots:
 - Integrate BIS with the remote SQL Server
 - Join the client workstation to the domain
 - Add Group Policy and certificate scenarios
-- Introduce monitoring and PowerShell automation
+- Introduce monitoring and additional PowerShell automation
 - Begin controlled failure-injection and troubleshooting exercises
