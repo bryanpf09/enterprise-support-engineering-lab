@@ -6,7 +6,7 @@ The goal of this project is to build a realistic enterprise environment, validat
 
 ## Current Status
 
-The project is currently in the Active Directory and DNS phase.
+The Active Directory/DNS baseline is complete. The SQL01 Windows Server foundation is deployed and domain-integrated; SQL Server and SSRS installation are pending.
 
 Completed so far:
 
@@ -23,6 +23,8 @@ Completed so far:
 - Collected screenshots and command output as deployment evidence
 - Documented post-deployment `dcdiag` findings for later troubleshooting
 - Added a reusable PowerShell script to validate the Active Directory baseline
+- Deployed `SQL01` on Windows Server 2019 and configured separate `SQLData` storage
+- Joined SQL01 to Active Directory and validated network, secure channel, and computer OU placement
 
 ## Current Active Directory Structure
 
@@ -35,7 +37,7 @@ corp.bryanlab.test
 ├── BRYANLAB-Servers
 │   ├── Application-Servers
 │   └── Database-Servers
-│
+│       └── SQL01
 ├── BRYANLAB-Workstations
 ├── BRYANLAB-Users
 ├── BRYANLAB-Service-Accounts
@@ -72,6 +74,7 @@ GG-SQL-Administrators
                   SQL Server 2019
                         +
                        SSRS
+                (not installed yet)
 ```
 
 The initial environment intentionally has no default gateway and no Internet access.
@@ -121,16 +124,18 @@ Supporting command output and screenshots:
 
 [Active Directory evidence](evidence/active-directory/)
 
+[SQL01 deployment evidence](evidence/sql-server/outputs/)
+
 ## Documentation
 
 - [Lab architecture](docs/architecture.md)
 - [DC01 deployment and validation](docs/active-directory/dc01-deployment.md)
+- [SQL01 Windows Server deployment and domain integration](docs/sql-server/sql01-deployment.md)
 
 ## Next Steps
 
-- Continue Active Directory identity configuration
-- Deploy `SQL01`
-- Install SQL Server 2019 and SSRS
+- Select the BIS version and confirm its supported remote SQL Server / SSRS configuration
+- Install SQL Server 2019 and SSRS on `SQL01`
 - Deploy `BIS01`
 - Integrate BIS with the remote SQL Server
 - Join the client workstation to the domain
