@@ -1,7 +1,13 @@
 # SQL01 — Windows Server Deployment and Domain Integration
 
 **Milestone:** SQL01 operating-system baseline  
-**Status:** Completed and validated; SQL Server and SSRS installation pending
+**Status at this milestone:** Windows Server baseline completed and validated, before SQL Server and SSRS installation
+
+> **Historical deployment record:** This document captures
+> the initial Windows Server configuration of SQL01.
+> SQL Server 2019 and SSRS were subsequently installed.
+> See [SQL Server and SSRS Deployment](sql01-sql-ssrs-deployment.md)
+> for the next deployment milestone and its validation status.
 
 ## Objective
 
@@ -61,6 +67,21 @@ Additional interactive checks completed during deployment (not archived separate
 - Physical host RAM is limited to 32 GB. Resource pressure must be reassessed when the 16 GB BIS01 VM is introduced, before collecting performance benchmarks.
 - SQL Server 2019, SSRS, and BIS have **not** been installed at this milestone. Final SQL/SSRS installation settings will be selected after confirming the target BIS release's documentation and compatibility requirements.
 
-## Next milestone
+### Windows Firewall configuration timeline
+
+During the initial Windows Server deployment, Windows Firewall
+was enabled and all three profiles were verified.
+
+Later, during the SQL Server and BIS installation phase,
+Windows Firewall was temporarily disabled during the remote SQL Server and BIS installation workflow. In accordance with the vendor installation procedure.
+
+Re-enabling the firewall, applying the required application
+rules, and validating connectivity remain part of the
+post-installation security-hardening phase.
+
+See [SQL Server and SSRS Deployment](sql01-sql-ssrs-deployment.md)
+for the later deployment stage.
+
+## Next milestone (as planned at the time)
 
 Select the BIS release and compatible SQL Server edition/configuration, then install and validate the SQL Server Database Engine and SSRS on `SQL01` before deploying `BIS01`.
