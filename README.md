@@ -1,8 +1,29 @@
 # Enterprise Support Engineering Lab
 
-Hands-on enterprise infrastructure and troubleshooting lab built around Windows Server, Active Directory, DNS, SQL Server, networking, automation, and Keenfinity (formerly Bosch Security) **Building Integration System (BIS)**.
+A hands-on, self-directed **enterprise application support and troubleshooting** project. This lab uses virtualized Windows servers, Active Directory, SQL Server, and reporting services to build the infrastructure behind a business-critical application.
 
-The goal is to build a realistic enterprise environment, validate a known-good baseline, and later introduce controlled failures for structured troubleshooting and root-cause analysis.
+The approach is to **deploy the environment, verify a healthy baseline, and then investigate controlled failures** using logs, PowerShell, network diagnostics, and root-cause analysis. The goal is to demonstrate transferable support-engineering skills—not simply install a particular product.
+
+## What Is BIS, and Why Use It?
+
+**Building Integration System (BIS)** is an enterprise security management application originally developed by Bosch Security (now part of Keenfinity). It integrates systems such as access control, video surveillance, fire detection, and intrusion monitoring.
+
+In this project, BIS is the **application under test**. It depends on infrastructure commonly found in other enterprise applications: Windows services, web services, user authentication, SQL databases, network connectivity, and HTTPS certificates. The same diagnostic methods apply to many application-support and production-support roles, even when the software itself is different.
+
+**Scope note:** This milestone covers the server application and its dependencies. The presence of BIS components does not mean physical security controllers, cameras, or external systems have been integrated.
+
+## Skills Demonstrated So Far
+
+| Area | Hands-on work completed |
+|---|---|
+| Windows Server & virtualization | Built and configured three Windows Server 2019 VMs using VMware Workstation. |
+| Active Directory & DNS | Deployed a domain controller, organized computer accounts into OUs, and checked domain membership, DNS discovery, and secure channels. |
+| SQL Server administration | Installed SQL Server 2019 Express with separate named database instances and dedicated storage on a remote database server. |
+| Networking & diagnostics | Configured static IP addresses and isolated networking; verified DNS resolution and TCP connectivity between application and SQL servers. |
+| HTTPS & reporting services | Configured remote SSRS and its certificate; successfully reached and authenticated to its HTTPS endpoints from the application server. |
+| PowerShell & validation | Used repeatable commands and an AD baseline script to verify configuration and collect technical evidence. |
+
+**Current focus:** Finish BIS post-installation checks and establish a verified, working baseline. **Next:** Add client testing, security hardening, monitoring, and controlled incident investigations.
 
 ## Current Status
 
@@ -10,9 +31,9 @@ The goal is to build a realistic enterprise environment, validate a known-good b
 
 - **Active Directory and DNS:** Deployed and baseline-validated on `DC01`.
 - **SQL Server:** SQL Server 2019 Express installed on `SQL01` with separate named instances for BIS Event Log/Security Engine and Access Engine.
-- **Reporting:** SSRS 2019 deployed on `SQL01`; local HTTPS endpoints validated. Remote trust and report execution are pending.
+- **Reporting:** SSRS 2019 deployed on `SQL01`. HTTPS access from `BIS01` succeeded without certificate warnings, and a remote login using the local `SQL01` Administrator account succeeded. BIS service-account access and actual report execution remain unverified.
 - **BIS application:** BIS 4.9.1 installed successfully on domain-joined `BIS01`; installation reported no errors and the server was rebooted.
-- **Operational status:** **Not yet declared fully operational.** Service health, database authentication, reporting, licensing, first configuration, certificate trust, and final firewall rules still need validation or completion.
+- **Operational status:** **Not yet declared fully operational.** BIS service health, application database permissions, application-level reporting, licensing, initial configuration, client access, and final firewall rules still need validation or completion.
 
 ### Completed milestones
 
@@ -25,11 +46,12 @@ The goal is to build a realistic enterprise environment, validate a known-good b
 - Built `SQL01` with a dedicated SQL data disk and joined it to the `Database-Servers` OU.
 - Installed SQL Server 2019 Express with `SQL01\BIS` and `SQL01\BIS_ACE` as separate named instances.
 - Installed and configured SSRS on `SQL01`; accessed reporting HTTPS endpoints locally.
-- Completed remote SQL/SSRS preparation steps for BIS Topology 3, including preparing a public reporting certificate for later client trust configuration.
+- Completed remote SQL/SSRS preparation steps for BIS Topology 3, including creating a reporting certificate; imported the public certificate on `BIS01` and `DC01` (the need for trust on `DC01` will be reviewed).
 - Built `BIS01` from a generalized Windows Server 2019 template, using a Basic disk with a 299.4 GiB C: volume.
 - Joined `BIS01` to the `Application-Servers` OU and validated the secure channel and DomainAuthenticated network profile.
 - Verified TCP reachability from `BIS01` to both SQL listeners, ports `14330` and `14331`.
 - Completed BIS 4.9.1 application installation with the remote SQL and SSRS configuration; rebooted BIS01.
+- Opened the remote SSRS HTTPS endpoints from BIS01 without certificate warnings and authenticated using the local SQL01 Administrator account.
 
 ## Current Active Directory Structure
 
@@ -78,11 +100,15 @@ Initial security groups: `GG-BIS-Administrators`, `GG-BIS-Operators`, `GG-BIS-Re
               No default gateway / no Internet access
 ```
 
-BIS uses a remote database and remote SSRS server (**BIS 4.9.1 Topology 3**). ACE runs on a separate named SQL Express instance, as required by the installation manual. The architecture shown is **installed but not yet fully application-validated**.
+BIS uses a remote database and remote reporting server (**Topology 3**, the vendor's name for this deployment arrangement). The **Access Engine (ACE)**, which supports access-control functionality, uses a separate named SQL Express instance from the BIS Event Log and Security Engine. This separation follows the BIS installation manual.
+
+**BIS terminology:** *Event Log* records application events; *Security Engine* is a BIS functional component; *SSRS* is Microsoft SQL Server Reporting Services, used for reports. The architecture shown is **installed but not yet fully application-validated**.
 
 ## Technologies in Scope
 
-Windows Server 2019, Active Directory Domain Services, DNS, Group Policy, PowerShell, VMware Workstation, SQL Server 2019 Express, SQL Server Reporting Services, BIS 4.9.1, HTTPS certificates/PKI, network troubleshooting, firewall configuration, monitoring, performance analysis, packet analysis, incident troubleshooting and root-cause analysis.
+**Used in the deployment:** Windows Server 2019, VMware Workstation, Active Directory Domain Services, DNS, PowerShell, SQL Server 2019 Express, SQL Server Reporting Services, BIS 4.9.1, HTTPS certificates, static network configuration, and connectivity diagnostics.
+
+**Planned or still being validated:** Group Policy scenarios, firewall hardening, monitoring, performance and packet analysis, client deployment, incident simulation, and documented root-cause analysis.
 
 ## Validation and Evidence
 
@@ -99,6 +125,8 @@ Examples of checks used: `Get-ADDomain`, `Get-ADForest`, `Get-DnsServerZone`, `R
 
 ## Documentation
 
+**New to this project?** Start with the [architecture overview](docs/architecture.md) for the big picture. The deployment documents show the implementation details, and the evidence links above show the checks actually performed.
+
 - [Architecture and project roadmap](docs/architecture.md)
 - [DC01 deployment and validation](docs/active-directory/dc01-deployment.md)
 - [SQL01 Windows Server baseline (historical milestone)](docs/sql-server/sql01-deployment.md)
@@ -109,7 +137,8 @@ Examples of checks used: `Get-ADDomain`, `Get-ADForest`, `Get-DnsServerZone`, `R
 
 - [ ] Review the BIS **Mandatory Post Installation** instructions.
 - [ ] Run the BIS Change Password Tool as Administrator to change the `Mgts-SSRS-Viewer` password (Topology 3 requirement).
-- [ ] Import and verify the SQL01 SSRS public certificate on BIS01 and later on BIS clients.
+- [x] Import the SQL01 SSRS public certificate on BIS01 and test remote HTTPS authentication with an administrator account.
+- [ ] Configure and test certificate trust on future BIS client machines; verify reporting under BIS application/service identities.
 - [ ] Validate BIS Windows services, BIS Manager, both database connections, and reporting functionality.
 - [ ] Complete licensing (if applicable), create an initial BIS configuration, and test client login.
 - [ ] Re-enable Windows Firewall on all applicable systems and implement **vendor-documented, scoped rules**; validate connectivity again. The firewalls were temporarily disabled during installation in this isolated lab.

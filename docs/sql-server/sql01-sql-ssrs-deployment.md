@@ -7,6 +7,8 @@
 
 Deploy Microsoft SQL Server 2019 Express and SQL Server Reporting Services (SSRS) on a separate Windows Server 2019 domain member to support Building Integration System (BIS) 4.9.1. This follows the installation manual's **Topology 3**, with both database services and Reporting Services on the remote SQL server.
 
+**Why this matters:** In a multi-server enterprise application, a successful installation alone is insufficient. Database listeners, DNS, Windows identities, SQL permissions, HTTPS certificates and reporting services must all communicate correctly across machines. This deployment establishes dependencies that can be validated and later deliberately broken for troubleshooting exercises.
+
 The earlier [SQL01 Windows Server baseline](sql01-deployment.md) intentionally records the *pre-SQL-installation* stage; this document records the later application deployment.
 
 ## SQL01 platform
@@ -56,7 +58,9 @@ SSRS 2019 was installed on SQL01 and associated with the `SQL01\BIS` database en
 | SSRS Web Service | `https://sql01:443/ReportServer_BIS` |
 | SSRS Web Portal | `https://sql01:443/Reports_BIS` |
 
-The SSRS service was confirmed running, and both HTTPS endpoints were reached **from SQL01 itself**. The remote SQL preparation utilities supplied with BIS installation media were run, and an SSRS self-signed certificate was configured. The public `.CER` was prepared for import on BIS01 and subsequent clients; remote trust testing is pending.
+The SSRS service was confirmed running, and both HTTPS endpoints were reached **locally on SQL01**. The remote SQL preparation utilities supplied with BIS installation media were run, and an SSRS self-signed certificate was configured.
+
+The public reporting `.CER` was imported on BIS01 (and also on DC01 during lab setup). From BIS01, the SSRS Web Service and Web Portal were accessed via HTTPS **without browser certificate warnings**. An authentication prompt appeared, and sign-in using the local `SQL01\Administrator` account succeeded. This confirms remote HTTPS access and administrative authentication; it does **not** establish BIS service-account authorization or the ability to generate a report from BIS. Future BIS clients still need certificate trust configured.
 
 ## Verified SQL network connectivity
 
@@ -82,7 +86,9 @@ Windows Firewall was temporarily disabled during installation on the isolated la
 ## Pending validation
 
 - [ ] Confirm BIS can authenticate to both SQL instances and query its application databases.
-- [ ] Import/verify remote SSRS certificate trust on BIS01 and clients.
+- [x] Import the reporting public certificate on BIS01 and verify remote SSRS HTTPS access without browser certificate warnings.
+- [x] Verify remote SSRS login from BIS01 using a local SQL01 administrative account (not the BIS application identity).
+- [ ] Configure and verify SSRS certificate trust on future BIS clients.
 - [ ] Confirm reports deploy and execute successfully from BIS.
 - [ ] Re-enable and configure Windows Firewall, then retest SQL and SSRS connectivity.
 - [ ] Capture sanitized database, reporting, service and application evidence.

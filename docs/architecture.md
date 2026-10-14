@@ -8,11 +8,13 @@
 
 This hands-on enterprise infrastructure and support-engineering lab is built around **Building Integration System (BIS)**, now part of Keenfinity (formerly Bosch Security), and its Windows Server, Active Directory, SQL Server, reporting, and networking dependencies.
 
+**What is BIS?** It is an enterprise platform used to manage integrated physical-security systems, including access control, video surveillance, fire detection, and intrusion detection. The focus of this lab is not just learning one vendor's product: it is understanding and troubleshooting the **Windows, identity, database, reporting, network, and certificate services** that enterprise applications depend on. These skills transfer to other business-critical software platforms.
+
 The project is designed to document a realistic multi-server deployment, validate a known-good operating baseline, and then reproduce controlled incidents using structured troubleshooting and root-cause analysis.
 
 Scope includes Windows Server, Active Directory/DNS, Group Policy, SQL Server 2019, SSRS, BIS, certificates/PKI, network/firewall configuration, monitoring, PowerShell, performance and packet analysis, and incident response.
 
-**Milestone distinction:** Successful software installation is not equivalent to a verified operational baseline. BIS runtime, database authorization, reporting, certificate trust, licensing and client access still require checks.
+**Milestone distinction:** Successful software installation is not equivalent to a verified operational baseline. BIS runtime, database authorization, report execution, licensing, client access and final firewall rules still require checks. Remote SSRS HTTPS trust and administrative login from BIS01 have already been tested.
 
 ---
 
@@ -135,10 +137,12 @@ Domain discovery, DNS SRV resolution, domain membership, secure channels, and co
   - `SQL01\BIS` (Event Log/Security Engine) — static TCP **14330**
   - `SQL01\BIS_ACE` (Access Engine) — static TCP **14331**
 - SQL Server Reporting Services 2019 on SQL01, HTTPS **443**, with reporting database on the `BIS` instance
-- Local reporting service endpoints and both SQL listeners checked; BIS-to-SQL TCP reachability verified
+- Reporting HTTPS endpoints accessed on SQL01 and from BIS01 without remote browser certificate warnings; administrative authentication from BIS01 succeeded. Both SQL listeners and BIS-to-SQL TCP reachability were also verified
 - End-to-end reporting, SQL permissions, and firewall hardening still pending
 
 A separate Access Engine instance is required because BIS 4.9.1 documents ACE and Event Log/Security Engine on the same SQL Server Express instance as incompatible.
+
+For readers unfamiliar with the application: **Access Engine (ACE)** supports the access-control part of BIS; the **Event Log** and **Security Engine** are BIS components associated with security/event processing. Their database separation is a vendor compatibility requirement, not a generic SQL Server best practice.
 
 ### BIS01 — Enterprise application
 
@@ -150,7 +154,7 @@ A separate Access Engine instance is required because BIS 4.9.1 documents ACE an
 - BIS installed at `C:\MgtS\`
 - BIS installer configured the Access, Automation, Security, and Video login-server components
 - Uses SQL01 for both SQL instances and SSRS (**Topology 3**)
-- BIS runtime health, licensing, initial configuration, reporting certificate trust and client tests pending
+- BIS runtime health, licensing, initial configuration, report execution and client tests pending; administrative SSRS authentication does not establish BIS service-account access
 
 ### CLIENT01 — Planned client
 
@@ -169,7 +173,7 @@ A separate Access Engine instance is required because BIS 4.9.1 documents ACE an
 
 ## 7. Database and Reporting Topology
 
-BIS 4.9.1 installation follows the vendor's **Topology 3**: the BIS login server runs separately from both SQL Server databases and Reporting Services.
+BIS 4.9.1 installation follows the vendor's **Topology 3**: the BIS login server runs separately from both SQL Server databases and Reporting Services. *Topology 3* is terminology from the BIS installation manual, not a general SQL Server architecture standard. This separation creates realistic cross-server dependencies—DNS, TCP connectivity, authentication, service availability and HTTPS trust—that can later be tested in troubleshooting scenarios.
 
 ```text
                      ISOLATED LAB / 10.10.10.0/24
@@ -194,14 +198,14 @@ BIS 4.9.1 installation follows the vendor's **Topology 3**: the BIS login server
                    No Internet access / no gateway
 ```
 
-SSRS endpoints verified locally on SQL01:
+SSRS endpoints verified locally on SQL01 and accessed remotely from BIS01:
 
 ```text
 https://sql01:443/ReportServer_BIS
 https://sql01:443/Reports_BIS
 ```
 
-SSRS uses a self-signed reporting certificate. Distribution of the **public** certificate to BIS01 and future client systems is pending. The certificate's identity and trust must be checked; private keys must not be copied into the repository.
+SSRS uses a self-signed reporting certificate. Its **public** certificate was imported on BIS01 (and also on DC01 during lab setup). From BIS01, both reporting HTTPS endpoints opened **without browser certificate warnings**, and Windows authentication succeeded using a local SQL01 administrator account. This establishes remote HTTPS access and administrative authentication, **not** BIS service-account permissions or report execution. Future BIS clients still need their own trust configuration. No certificate private keys belong in this repository.
 
 ---
 
@@ -271,7 +275,7 @@ Diagnostic tools may include Windows Event Viewer, SQL/BIS/SSRS/IIS logs, PowerS
 | 3 | SQL Server and Reporting Services | Installed; integration and reporting validation pending |
 | 4 | BIS deployment | Installed and rebooted; mandatory post-install tasks pending |
 | 5 | Client and identity integration | Planned |
-| 6 | Certificates and PKI | Initial reporting certificate configured; BIS01/client trust pending |
+| 6 | Certificates and PKI | Reporting certificate configured; BIS01 HTTPS trust tested; future client trust pending |
 | 7 | Network firewall and segmentation | Firewall hardening pending; future segmentation planned |
 | 8 | Monitoring and automation | AD validation script exists; further expansion planned |
 | 9 | Remote access and VPN | Planned |
@@ -284,7 +288,7 @@ Diagnostic tools may include Windows Event Viewer, SQL/BIS/SSRS/IIS logs, PowerS
 
 1. Review BIS Mandatory Post Installation requirements and change the Topology 3 `Mgts-SSRS-Viewer` password using the vendor tool.
 2. Validate Windows services, BIS Manager, application logs, SQL access and the SSRS end-to-end reporting workflow.
-3. Import and validate the public SSRS certificate on BIS01 and clients.
+3. Import and validate the public SSRS certificate on future BIS client machines; retain BIS01 remote HTTPS results as baseline evidence.
 4. License and configure BIS as required, then test a complete client workflow.
 5. Re-enable scoped firewall protections and repeat connectivity and functional tests.
 6. Capture the known-good baseline and resource metrics before controlled troubleshooting experiments.

@@ -7,7 +7,9 @@
 
 Deploy **Bosch Building Integration System (BIS) 4.9.1** on a dedicated Windows Server 2019 VM integrated with Active Directory. Use a remote SQL Server 2019 Express and SQL Server Reporting Services environment (**BIS Topology 3**) to reproduce realistic enterprise application dependencies.
 
-**Important distinction:** The BIS installation wizard completed without reported errors, and BIS01 was rebooted. This does **not yet establish a known-good operational baseline**. Runtime, licensing, database authentication, certificate trust, client access, and report execution are still being checked.
+BIS is an enterprise physical-security integration platform. For readers who do not work with BIS, the key engineering challenge here is supporting an application whose availability depends on **identity services, IIS, SQL databases, reporting, certificates and network communication across multiple servers**. Those dependencies are common to many enterprise application support environments.
+
+**Important distinction:** The BIS installation wizard completed without reported errors, and BIS01 was rebooted. This does **not yet establish a known-good operational baseline**. Application runtime, licensing, BIS service-account access to databases/reports, client access and report execution remain to be validated. Remote SSRS HTTPS access and administrator login have since been tested.
 
 ## BIS01 host configuration
 
@@ -47,6 +49,8 @@ Internal DNS discovery and LDAP connectivity to DC01 were tested successfully be
 
 ## Remote SQL database topology
 
+**How the servers work together:** BIS01 hosts the integration application; SQL01 hosts its database engines and reporting services. The vendor calls this separation **Topology 3**. This arrangement lets us test failures involving DNS resolution, database listeners, SQL permissions, service identities and HTTPS certificates without placing every component on a single machine.
+
 | BIS component | Remote SQL Server instance | Fixed TCP port |
 |---|---|---|
 | Event Log | `SQL01\BIS` | `14330` |
@@ -74,16 +78,23 @@ The installation wizard summary selected the login-server components **Access, A
 
 The screenshot records selected components and SQL destinations. It does **not** itself demonstrate successful completion or functioning application services.
 
+## Remote SSRS HTTPS validation
+
+The public self-signed reporting certificate created on SQL01 was imported on BIS01. From BIS01, both SSRS HTTPS endpoints (`https://sql01/Reports_BIS` and `https://sql01/ReportServer_BIS`) opened without browser certificate warnings. An authentication prompt appeared, and the local `SQL01\Administrator` account successfully signed in.
+
+These checks validate **remote HTTPS access, browser certificate trust and administrative Windows authentication**. They do not validate access through BIS service accounts or the successful execution of a report in BIS. The certificate was also imported on DC01 during lab setup; this is **not a Topology 3 requirement** and will be reviewed during security hardening. Future BIS clients still need certificate trust configuration.
+
 ## Mandatory post-installation tasks
 
-The following items have **not been reported as completed** at the time of this milestone:
+The following checklist includes both completed reporting connectivity checks and items that still require post-installation verification:
 
 - [ ] Review and complete the BIS **Mandatory Post Installation** instructions displayed by the installer.
 - [ ] On BIS01, run `C:\MgtS\Tools\ChangePassword` **as Administrator** and change the `Mgts-SSRS-Viewer` password, mandatory for Topology 3 (BIS 4.9.1 manual, page 19).
 - [ ] Verify that BIS Windows services are installed, start as expected, and remain healthy after reboot.
 - [ ] Open BIS Manager/Configuration Manager and check for system-level errors and database connectivity.
-- [ ] Import the **public** SSRS self-signed `.CER` from SQL01 into the appropriate Local Machine trust store on BIS01, after verifying its identity/thumbprint (manual, section 8.3). Repeat on future client systems.
-- [ ] Verify reporting HTTPS access **from BIS01**, then validate an actual report from the BIS application.
+- [x] Import the public SSRS self-signed `.CER` on BIS01 and open the remote reporting HTTPS endpoints without browser certificate warnings (manual, section 8.3). Future BIS clients still need this certificate.
+- [x] Verify remote SSRS administrative authentication from BIS01 using the local SQL01 administrator account.
+- [ ] Validate an actual report from the BIS application and confirm required BIS service-account permissions for reporting.
 - [ ] Complete license configuration if required, then create and save an initial BIS configuration.
 - [ ] Prepare a client system and validate authentication, BIS UI access, and a test workflow.
 - [ ] Re-enable Windows Firewall and apply vendor-documented scoped rules on SQL01, BIS01, and DC01; repeat network/application checks.
