@@ -93,9 +93,9 @@ Examples of checks used: `Get-ADDomain`, `Get-ADForest`, `Get-DnsServerZone`, `R
 - [Active Directory evidence](evidence/active-directory/)
 - [SQL01 operating-system baseline evidence](evidence/sql-server/outputs/)
 - [SQL listening ports](evidence/sql-server/outputs/SQL01-SQL-Listeners.txt)
-- [BIS01 network, domain and storage evidence](evidence/bis/outputs/BIS01-Baseline-Validation.txt)
-- [BIS01 remote SQL connectivity evidence](evidence/bis/outputs/BIS01-SQL-Connectivity.txt)
-- [BIS installer configuration screenshot](evidence/bis/screenshots/BIS01-Installer-Configuration.png) — **pre-installation configuration**, not proof of runtime health
+- [BIS01 network, domain and storage evidence](evidence/bis-server/outputs/BIS01-Baseline-Validation.txt)
+- [BIS01 remote SQL connectivity evidence](evidence/bis-server/outputs/BIS01-SQL-Connectivity.txt)
+- [BIS installer configuration screenshot](evidence/bis-server/screenshots/BIS01-Installer-Configuration.png) — **pre-installation configuration**, not proof of runtime health
 
 ## Documentation
 
@@ -103,7 +103,7 @@ Examples of checks used: `Get-ADDomain`, `Get-ADForest`, `Get-DnsServerZone`, `R
 - [DC01 deployment and validation](docs/active-directory/dc01-deployment.md)
 - [SQL01 Windows Server baseline (historical milestone)](docs/sql-server/sql01-deployment.md)
 - [SQL01 SQL Server and SSRS deployment](docs/sql-server/sql01-sql-ssrs-deployment.md)
-- [BIS01 deployment and post-installation checklist](docs/bis/bis01-deployment.md)
+- [BIS01 deployment and post-installation checklist](docs/bis-server/bis01-deployment.md)
 
 ## Next Steps
 

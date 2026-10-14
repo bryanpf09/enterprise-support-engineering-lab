@@ -298,4 +298,4 @@ Architecture decisions, configuration changes, verified command output, deployme
 
 **Integrity of evidence matters:** distinguish screenshot/command results from assumptions, and installation success from proof of operational health. This repository must not contain passwords, private certificate keys, production customer data, or vendor licenses.
 
-Supporting records: [SQL01 application deployment](sql-server/sql01-sql-ssrs-deployment.md), [BIS01 deployment](bis/bis01-deployment.md), and [DC01 validation](active-directory/dc01-deployment.md).
+Supporting records: [SQL01 application deployment](sql-server/sql01-sql-ssrs-deployment.md), [BIS01 deployment](bis-server/bis01-deployment.md), and [DC01 validation](active-directory/dc01-deployment.md).
