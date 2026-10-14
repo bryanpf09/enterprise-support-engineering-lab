@@ -71,7 +71,7 @@ SQL01's TCP listening checks returned:
 
 From `BIS01` (`10.10.10.20`), `Test-NetConnection` resolved `SQL01.corp.bryanlab.test` to `10.10.10.30` and returned `TcpTestSucceeded : True` for ports `14330` and `14331`.
 
-[Listener evidence](../../evidence/sql-server/outputs/SQL01-SQL-Listeners.txt) · [Remote reachability evidence](../../evidence/bis/outputs/BIS01-SQL-Connectivity.txt)
+[Listener evidence](../../evidence/sql-server/outputs/SQL01-SQL-Listeners.txt) · [Remote reachability evidence](../../evidence/bis-server/outputs/BIS01-SQL-Connectivity.txt)
 
 These tests prove TCP accessibility, not SQL login authorization, query execution, or end-to-end BIS operation.
 

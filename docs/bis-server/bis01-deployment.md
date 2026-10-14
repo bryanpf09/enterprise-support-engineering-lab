@@ -28,7 +28,7 @@ Deploy **Bosch Building Integration System (BIS) 4.9.1** on a dedicated Windows 
 
 The original BIS01 clone was discarded during setup because its OS disk had been changed to Dynamic. A fresh clone was created and its **Basic** disk was extended instead. Windows storage verification reported the figures above. The final source VM template was not modified.
 
-[Host baseline evidence](../../evidence/bis/outputs/BIS01-Baseline-Validation.txt)
+[Host baseline evidence](../../evidence/bis-server/outputs/BIS01-Baseline-Validation.txt)
 
 ## Active Directory integration
 
@@ -70,7 +70,7 @@ The installation wizard summary selected the login-server components **Access, A
 8. Completed BIS application installation with **no errors reported**.
 9. Rebooted BIS01 after installation.
 
-[Installer summary screenshot (pre-installation)](../../evidence/bis/screenshots/BIS01-Installer-Configuration.png)
+[Installer summary screenshot (pre-installation)](../../evidence/bis-server/screenshots/BIS01-Installer-Configuration.png)
 
 The screenshot records selected components and SQL destinations. It does **not** itself demonstrate successful completion or functioning application services.
 
