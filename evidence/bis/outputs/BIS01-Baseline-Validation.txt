@@ -1,0 +1,32 @@
+# BIS01 — Windows storage and Active Directory baseline evidence
+# Source: PowerShell results supplied during deployment
+
+# Get-Volume -DriveLetter C | Select DriveLetter,FileSystem,SizeGB,FreeGB
+DriveLetter FileSystem SizeGB FreeGB
+----------- ---------- ------ ------
+          C NTFS        299.4 288.65
+
+# NOTE: This is a condensed representation of user-supplied calculated fields,
+# NOT the literal output of the command shown here. The actual user command was:
+# Get-Volume -DriveLetter C | Select-Object DriveLetter,FileSystem,
+#   @{Name="SizeGB";Expression={[math]::Round($_.Size / 1GB, 2)}},
+#   @{Name="FreeGB";Expression={[math]::Round($_.SizeRemaining / 1GB, 2)}}
+
+# Get-CimInstance Win32_ComputerSystem | Select Name,Domain,PartOfDomain
+Name               Domain             PartOfDomain
+----               ------             ------------
+BIS01              corp.bryanlab.test         True
+
+# Get-NetConnectionProfile | Select Name,NetworkCategory | Format-List
+Name            : corp.bryanlab.test
+NetworkCategory : DomainAuthenticated
+
+# Test-ComputerSecureChannel
+True
+
+# Get-ADComputer -Identity "BIS01" -Properties DNSHostName | Select Name,DNSHostName,DistinguishedName | Format-List
+Name              : BIS01
+DNSHostName       : BIS01.corp.bryanlab.test
+DistinguishedName : CN=BIS01,OU=Application-Servers,OU=BRYANLAB-Servers,DC=corp,DC=bryanlab,DC=test
+
+# User confirmed disk type: Basic. Initial Generalized template remains unchanged.

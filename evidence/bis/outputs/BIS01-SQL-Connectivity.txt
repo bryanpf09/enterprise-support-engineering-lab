@@ -1,0 +1,21 @@
+# BIS01 to SQL01 — Remote SQL TCP tests
+# Source: PowerShell output captured during deployment on BIS01
+
+PS> Test-NetConnection SQL01.corp.bryanlab.test -Port 14330
+ComputerName     : SQL01.corp.bryanlab.test
+RemoteAddress    : 10.10.10.30
+RemotePort       : 14330
+InterfaceAlias   : Ethernet0
+SourceAddress    : 10.10.10.20
+TcpTestSucceeded : True
+
+PS> Test-NetConnection SQL01.corp.bryanlab.test -Port 14331
+ComputerName     : SQL01.corp.bryanlab.test
+RemoteAddress    : 10.10.10.30
+RemotePort       : 14331
+InterfaceAlias   : Ethernet0
+SourceAddress    : 10.10.10.20
+TcpTestSucceeded : True
+
+# Interpretation: DNS name resolution and TCP reachability were successful.
+# This does not establish SQL login permissions or BIS runtime health.

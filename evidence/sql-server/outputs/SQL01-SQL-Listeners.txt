@@ -1,0 +1,14 @@
+# SQL01 — SQL TCP listener validation
+# Source: PowerShell output captured during deployment
+# Command (SQL01):
+# Get-NetTCPConnection -State Listen | Where-Object { $_.LocalPort -in 14330,14331 } | Select-Object LocalAddress,LocalPort,State
+
+LocalAddress LocalPort  State
+------------ ---------  -----
+::               14331 Listen
+::               14330 Listen
+0.0.0.0          14331 Listen
+0.0.0.0          14330 Listen
+
+# Interpretation: Both SQL instances were listening on IPv4 and IPv6 endpoints.
+# This does not prove SQL authentication, database permissions or report execution.
